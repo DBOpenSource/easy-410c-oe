@@ -27,8 +27,9 @@ def main():
   {1}/meta-qualcomm \\
   {2}/meta-openembedded/meta-oe \\
   {3}/meta-openembedded/meta-gnome \\
-  {4}/meta-easy-oe \\
-  "'''.format(topdir, topdir, topdir, topdir, topdir)
+  {4}/meta-96boards \\
+  {5}/meta-easy-oe \\
+  "'''.format(topdir, topdir, topdir, topdir, topdir, topdir)
 	
 	updated_contents = parts[0]+newlines+bottom
 	open(os.sys.argv[1], "w").write(updated_contents)
