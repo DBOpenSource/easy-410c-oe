@@ -1,0 +1,5 @@
+build/
+meta-openembedded/
+meta-qualcomm/
+openembedded-core/
+.conf_patched
