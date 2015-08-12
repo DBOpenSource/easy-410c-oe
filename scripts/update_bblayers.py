@@ -24,12 +24,13 @@ def main():
 
 	newlines ='''BBLAYERS ?= " \\
   {0}/openembedded-core/meta \\
-  {1}/meta-qualcomm \\
-  {2}/meta-openembedded/meta-oe \\
-  {3}/meta-openembedded/meta-gnome \\
-  {4}/meta-96boards \\
-  {5}/meta-db410c \\
-  "'''.format(topdir, topdir, topdir, topdir, topdir, topdir)
+  {0}/meta-qualcomm \\
+  {0}/meta-openembedded/meta-oe \\
+  {0}/meta-openembedded/meta-gnome \\
+  {0}/meta-linaro/meta-linaro-toolchain \\
+  {0}/meta-96boards \\
+  {0}/meta-db410c \\
+  "'''.format(topdir)
 	
 	updated_contents = parts[0]+newlines+bottom
 	open(os.sys.argv[1], "w").write(updated_contents)

@@ -5,6 +5,15 @@ MACHINE ?= "dragonboard-410c"
 
 all: core-image
 
+# Uncomments lines in scripts/local_addtions.conf to use external toolchain
+toolchain: gcc-linaro-aarch64-linux-gnu-4.8-2013.09_linux
+
+downloads/gcc-linaro-4.9-2015.02-3-x86_64_aarch64-linux-gnu.tar.xz:
+	mkdir -p downloads
+	cd downloads && wget https://releases.linaro.org/15.02/components/toolchain/binaries/aarch64-linux-gnu/gcc-linaro-4.9-2015.02-3-x86_64_aarch64-linux-gnu.tar.xz
+
+gcc-linaro-aarch64-linux-gnu-4.8-2013.09_linux: downloads/gcc-linaro-4.9-2015.02-3-x86_64_aarch64-linux-gnu.tar.xz
+	tar xJf @<
 
 .repo:
 	repo init -u https://github.com/DBOpenSource/db410c-manifest
@@ -36,7 +45,7 @@ $(BUILDDIR): .updated
 .conf_patched:
 	./scripts/update_bblayers.py $(BUILDDIR)/conf/bblayers.conf $(TOP)
 	sed -i 's/^MACHINE .*/MACHINE ?= $(MACHINE)/' $(BUILDDIR)/conf/local.conf
-	cat ./scripts/local_additions.conf >> $(BUILDDIR)/conf/local.conf
+	./scripts/update_local_conf.py $(BUILDDIR)/conf/local.conf $(TOP)
 	touch $@
 	
 core-image: bblayers firmware

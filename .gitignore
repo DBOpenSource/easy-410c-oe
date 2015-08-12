@@ -9,3 +9,4 @@ meta-smartphone/
 .conf_patched
 .updated
 .repo
+gcc-linaro-aarch64-linux-gnu-4.8-2013.09_linux/
