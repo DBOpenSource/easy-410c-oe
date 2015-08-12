@@ -28,7 +28,7 @@ def main():
   {2}/meta-openembedded/meta-oe \\
   {3}/meta-openembedded/meta-gnome \\
   {4}/meta-96boards \\
-  {5}/meta-easy-oe \\
+  {5}/meta-db410c \\
   "'''.format(topdir, topdir, topdir, topdir, topdir, topdir)
 	
 	updated_contents = parts[0]+newlines+bottom

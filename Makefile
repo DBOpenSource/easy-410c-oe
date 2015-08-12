@@ -5,44 +5,30 @@ MACHINE ?= "dragonboard-410c"
 
 all: core-image
 
-get-repos: .repos_fetched
-	touch $@
 
-.repos_fetched: openembedded-core openembedded-core/bitbake meta-qualcomm meta-openembedded meta-96boards
+.repo:
+	repo init -u https://github.com/DBOpenSource/db410c-manifest
 
-openembedded-core:
-	[ -d $@ ] || git clone https://github.com/openembedded/oe-core $@
+.updated: .repo
+	repo sync
+	touch .updated
 
-openembedded-core/bitbake: openembedded-core
-	[ -d $@ ] || git clone https://github.com/openembedded/bitbake $@
+update: .repo
+	repo sync
 
-meta-qualcomm: 
-	[ -d $@ ] || git clone https://github.com/ndechesne/$@.git
-
-meta-openembedded:	
-	[ -d $@ ] || git clone https://github.com/openembedded/$@
-
-meta-96boards:
-	[ -d $@ ] || git clone https://github.com/96boards/$@.git
-
-update-repos: openembedded-core openembedded-core/bitbake meta-qualcomm meta-openembedded
-	cd openembedded-core && git pull
-	cd openembedded-core/bitbake && git pull
-	cd meta-qualcomm && git pull
-	cd meta-openembedded && git pull
-	cd meta-96boards && git pull
-
-firmware: meta-easy-oe/recipes-firmware/files/linux-ubuntu-board-support-package-v1.zip
-meta-easy-oe/recipes-firmware/files/linux-ubuntu-board-support-package-v1.zip:
+firmware: meta-db410c/recipes-firmware/files/linux-ubuntu-board-support-package-v1.zip
+meta-db410c/recipes-firmware/files/linux-ubuntu-board-support-package-v1.zip:
 	@echo
-	@echo "Paste the following link in your browser and after accpting the EULA, save the file to $(TOP)$@"
+	@echo "*** YOU NEED TO DOWNLOAD THE FIRMWARE FROM QDN ***"
+	@echo "*** Paste the following link in your browser and after accepting the EULA, save the file to:
+	@echo "\t$(TOP)$@"
 	@echo
-	@echo "   https://developer.qualcomm.com/download/db410c/linux-ubuntu-board-support-package-v1.zip"
+	@echo "\thttps://developer.qualcomm.com/download/db410c/linux-ubuntu-board-support-package-v1.zip"
 	@echo
 	@false
 
 .PHONY builddir: $(BUILDDIR)
-$(BUILDDIR): .repos_fetched
+$(BUILDDIR): .updated
 	mkdir -p $@
 	./scripts/init_builddir.sh $@
 

@@ -2,4 +2,10 @@ build/
 meta-openembedded/
 meta-qualcomm/
 openembedded-core/
+meta-96boards/
+meta-db410c/
+meta-linaro/
+meta-smartphone/
 .conf_patched
+.updated
+.repo
