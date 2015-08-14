@@ -65,4 +65,4 @@ The boot image is located at
 
 The rootfs image is located at:
 
-build/tmp-eglibc/deploy/images/dragonboard-410c/core-image-minimal-dragonboard-410c.ext4
+./rootfs.img
