@@ -13,8 +13,8 @@ git clone https://github.com/DBOpenSource/easy-410c-oe.git
 cd easy-410c-oe
 ```
 
-If Android is currently on the device, used the recovery SD image to boot to fastboot,
-connect the ADB cable and run:
+If Android is currently on the device, you will need to repartition the eMMC.
+Use the recovery SD image to boot to fastboot, connect the ADB cable, and then run:
 
 ```
 make setup-emmc
