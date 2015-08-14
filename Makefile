@@ -41,7 +41,7 @@ downloads/initrd.img-4.0.0-linaro-lt-qcom: downloads
 	@[ -f $@ ] || (cd downloads && wget http://builds.96boards.org/snapshots/dragonboard410c/linaro/ubuntu/latest/initrd.img-4.0.0-linaro-lt-qcom)
 
 firmware: meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip
-meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip:
+meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip: bblayers
 	@echo
 	@echo "*** YOU NEED TO DOWNLOAD THE FIRMWARE FROM QDN ***"
 	@echo "*** Paste the following link in your browser and after accepting the EULA, save the file to:"
@@ -59,7 +59,7 @@ $(BUILDDIR): .updated
 	@./scripts/init_builddir.sh $@
 
 .PHONY bblayers: $(BUILDDIR) .conf_patched
-.conf_patched:
+.conf_patched: .updated
 	@./scripts/update_bblayers.py $(BUILDDIR)/conf/bblayers.conf $(TOP)
 	@sed -i 's/^MACHINE .*/MACHINE ?= $(MACHINE)/' $(BUILDDIR)/conf/local.conf
 	@./scripts/update_local_conf.py $(BUILDDIR)/conf/local.conf $(TOP)
@@ -72,7 +72,7 @@ $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4: bblayers firmware
 core-image-x11: bblayers firmware
 	@./scripts/make_bbtarget.sh $(BUILDDIR) core-image-x11
 
-$(IMG_DIR)/Image $(IMG_DIR)/Image-apq8016-sbc.dtb:
+$(IMG_DIR)/Image $(IMG_DIR)/Image-apq8016-sbc.dtb: bblayers 
 	@./scripts/make_bbtarget.sh $(BUILDDIR) linux-dragonboard
 
 $(TMP):
