@@ -3,7 +3,7 @@ TOP := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 BUILDDIR = $(TOP)build
 MACHINE ?= "dragonboard-410c"
 
-all: boot-db410c.img core-image
+all: core-image boot-db410c.img
 
 # Add skales to the path
 PATH:=$(TOP)skales:$(PATH)
@@ -30,11 +30,11 @@ downloads/dragonboard410c_bootloader_emmc_linux-40.zip:
 	@[ -f $@ ] || (cd downloads && wget http://builds.96boards.org/releases/dragonboard410c/linaro/rescue/15.06/dragonboard410c_bootloader_emmc_linux-40.zip)
 
 $(TMP)/bootloader/flashall: downloads/dragonboard410c_bootloader_emmc_linux-40.zip
-	mkdir -p $(TMP)/bootloader
-	cd $(TMP)/bootloader && unzip $(TOP)$<
+	@mkdir -p $(TMP)/bootloader
+	@cd $(TMP)/bootloader && unzip $(TOP)$<
 
 setup-emmc: $(TMP)/bootloader/flashall
-	cd $(TMP)/bootloader && sudo ./flashall
+	@cd $(TMP)/bootloader && sudo ./flashall
 
 # Initrd image
 downloads/initrd.img-4.0.0-linaro-lt-qcom: downloads
@@ -43,13 +43,20 @@ downloads/initrd.img-4.0.0-linaro-lt-qcom: downloads
 firmware: meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip
 meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip: bblayers
 	@echo
-	@echo "*** YOU NEED TO DOWNLOAD THE FIRMWARE FROM QDN ***"
-	@echo "*** Paste the following link in your browser and after accepting the EULA, save the file to:"
-	@echo "\t$(TOP)$@"
-	@echo
-	@echo "\thttps://developer.qualcomm.com/download/db410c/linux-ubuntu-board-support-package-v1.zip"
-	@echo
-	@echo "Afterward, retry running make"
+	@echo "********************************************************************************************"
+	@echo "* YOU NEED TO DOWNLOAD THE FIRMWARE FROM QDN"
+	@echo "*"
+	@echo "* Paste the following link in your browser:"
+	@echo "*"
+	@echo "*    https://developer.qualcomm.com/download/db410c/linux-ubuntu-board-support-package-v1.zip"
+	@echo "*"
+	@echo "* and after accepting the EULA, save the file to:"
+	@echo "*"
+	@echo "*    $(TOP)$@"
+	@echo "*"
+	@echo "* Afterward, retry running make"
+	@echo "*"
+	@echo "********************************************************************************************"
 	@echo
 	@false
 
@@ -76,11 +83,11 @@ $(IMG_DIR)/Image $(IMG_DIR)/Image-apq8016-sbc.dtb: bblayers
 	@./scripts/make_bbtarget.sh $(BUILDDIR) linux-dragonboard
 
 $(TMP):
-	mkdir -p $@
+	@mkdir -p $@
 
 $(TMP)/dt.img: $(TMP) $(IMG_DIR)/Image-apq8016-sbc.dtb
-	cp $(IMG_DIR)/Image-apq8016-sbc.dtb $(TMP)
-	dtbTool -o $@ -s 2048 $(TMP)
+	@cp $(IMG_DIR)/Image-apq8016-sbc.dtb $(TMP)
+	@dtbTool -o $@ -s 2048 $(TMP)
 
 boot-db410c.img: $(IMG_DIR)/Image downloads/initrd.img-4.0.0-linaro-lt-qcom $(TMP)/dt.img
 	mkbootimg --kernel $(IMG_DIR)/Image \
@@ -95,13 +102,10 @@ flash-bootimg: boot-db410c.img
 	sudo fastboot flash boot $<
 
 rootfs.img: $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4
-	cp $< $@
+	@cp $< $@
 
 flash-rootimg: rootfs.img
 	sudo fastboot flash rootfs $<
 
-resize2fs:
-	@./scripts/make_bbtarget.sh $(BUILDDIR) e2fsprogs
-
 clean-rootfs:
-	rm -f $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4 rootfs.img
+	@rm -f $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4 rootfs.img
