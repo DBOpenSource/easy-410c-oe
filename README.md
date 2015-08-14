@@ -45,7 +45,7 @@ make flash-bootimg
 make flash-rootfs
 ```
 
-# Booting int the new rootfs
+## Booting into the new rootfs
 Remove the ADB cable, pop out the recovery SD image, and cycle the power on the board.
 The board should boot to a login prompt and the login is root. No password is needed.
 
