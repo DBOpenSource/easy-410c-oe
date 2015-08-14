@@ -41,7 +41,7 @@ downloads/initrd.img-4.0.0-linaro-lt-qcom: downloads
 	@[ -f $@ ] || (cd downloads && wget http://builds.96boards.org/snapshots/dragonboard410c/linaro/ubuntu/latest/initrd.img-4.0.0-linaro-lt-qcom)
 
 firmware: meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip
-meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip: bblayers
+meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip: .updated
 	@echo
 	@echo "********************************************************************************************"
 	@echo "* YOU NEED TO DOWNLOAD THE FIRMWARE FROM QDN"
