@@ -3,7 +3,7 @@ TOP := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 BUILDDIR = $(TOP)build
 MACHINE ?= "dragonboard-410c"
 
-all: boot-db410c.img
+all: boot-db410c.img core-image
 
 # Add skales to the path
 PATH:=$(TOP)skales:$(PATH)
@@ -25,12 +25,23 @@ update: .repo
 downloads:
 	@mkdir -p $@
 
+# bootloader
+downloads/dragonboard410c_bootloader_emmc_linux-40.zip:
+	@[ -f $@ ] || (cd downloads && wget http://builds.96boards.org/releases/dragonboard410c/linaro/rescue/15.06/dragonboard410c_bootloader_emmc_linux-40.zip)
+
+$(TMP)/bootloader/flashall: downloads/dragonboard410c_bootloader_emmc_linux-40.zip
+	mkdir -p $(TMP)/bootloader
+	cd $(TMP)/bootloader && unzip $(TOP)$<
+
+setup-emmc: $(TMP)/bootloader/flashall
+	cd $(TMP)/bootloader && sudo ./flashall
+
 # Initrd image
 downloads/initrd.img-4.0.0-linaro-lt-qcom: downloads
-	@cd downloads && wget http://builds.96boards.org/snapshots/dragonboard410c/linaro/ubuntu/latest/initrd.img-4.0.0-linaro-lt-qcom
+	@[ -f $@ ] || (cd downloads && wget http://builds.96boards.org/snapshots/dragonboard410c/linaro/ubuntu/latest/initrd.img-4.0.0-linaro-lt-qcom)
 
-firmware: meta-db410c/recipes-firmware/files/linux-ubuntu-board-support-package-v1.zip
-meta-db410c/recipes-firmware/files/linux-ubuntu-board-support-package-v1.zip:
+firmware: meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip
+meta-db410c/recipes-firmware/firmware/files/linux-ubuntu-board-support-package-v1.zip:
 	@echo
 	@echo "*** YOU NEED TO DOWNLOAD THE FIRMWARE FROM QDN ***"
 	@echo "*** Paste the following link in your browser and after accepting the EULA, save the file to:"
@@ -56,7 +67,7 @@ $(BUILDDIR): .updated
 	
 core-image: $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4
 $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4: bblayers firmware
-	@[ -f $@ ] || @./scripts/make_bbtarget.sh $(BUILDDIR) core-image-minimal
+	@[ -f $@ ] || ./scripts/make_bbtarget.sh $(BUILDDIR) core-image-minimal
 
 core-image-x11: bblayers firmware
 	@./scripts/make_bbtarget.sh $(BUILDDIR) core-image-x11
@@ -83,5 +94,14 @@ boot-db410c.img: $(IMG_DIR)/Image downloads/initrd.img-4.0.0-linaro-lt-qcom $(TM
 flash-bootimg: boot-db410c.img
 	sudo fastboot flash boot $<
 
-flash-rootimg: $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4
+rootfs.img: $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4
+	cp $< $@
+
+flash-rootimg: rootfs.img
 	sudo fastboot flash rootfs $<
+
+resize2fs:
+	@./scripts/make_bbtarget.sh $(BUILDDIR) e2fsprogs
+
+clean-rootfs:
+	rm -f $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4 rootfs.img
