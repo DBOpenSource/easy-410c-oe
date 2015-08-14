@@ -75,9 +75,10 @@ $(BUILDDIR): .updated
 core-image: $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4
 $(IMG_DIR)/core-image-minimal-dragonboard-410c.ext4: bblayers firmware
 	@[ -f $@ ] || ./scripts/make_bbtarget.sh $(BUILDDIR) core-image-minimal
+	@echo "rootfs image created"
 
-core-image-x11: bblayers firmware
-	@./scripts/make_bbtarget.sh $(BUILDDIR) core-image-x11
+#core-image-x11: bblayers firmware
+#	@./scripts/make_bbtarget.sh $(BUILDDIR) core-image-x11
 
 $(IMG_DIR)/Image $(IMG_DIR)/Image-apq8016-sbc.dtb: bblayers 
 	@./scripts/make_bbtarget.sh $(BUILDDIR) linux-dragonboard
@@ -90,13 +91,14 @@ $(TMP)/dt.img: $(TMP) $(IMG_DIR)/Image-apq8016-sbc.dtb
 	@dtbTool -o $@ -s 2048 $(TMP)
 
 boot-db410c.img: $(IMG_DIR)/Image downloads/initrd.img-4.0.0-linaro-lt-qcom $(TMP)/dt.img
-	mkbootimg --kernel $(IMG_DIR)/Image \
+	@mkbootimg --kernel $(IMG_DIR)/Image \
           --ramdisk downloads/initrd.img-4.0.0-linaro-lt-qcom \
           --output boot-db410c.img \
           --dt $(TMP)/dt.img \
           --pagesize 2048 \
           --base 0x80000000 \
           --cmdline "root=/dev/disk/by-partlabel/rootfs rw rootwait console=tty0 console=ttyMSM0,115200n8"
+	@echo "Boot image created"
 	
 flash-bootimg: boot-db410c.img
 	sudo fastboot flash boot $<
