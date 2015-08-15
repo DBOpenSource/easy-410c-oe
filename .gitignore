@@ -5,12 +5,11 @@ openembedded-core/
 meta-96boards/
 meta-db410c/
 meta-linaro/
-meta-smartphone/
+db410c_makefiles/
 .conf_patched
 .updated
 .repo
 boot-db410c.img
 downloads/
-rootfs.img
 skales/
 tmp/
