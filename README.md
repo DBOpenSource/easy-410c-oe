@@ -56,13 +56,3 @@ on the device run:
 resize2fs /dev/disk/by-partlabel rootfs
 ```
 
-## General info
-
-The boot image is located at
-
-./boot-db410c.img
-
-
-The rootfs image is located at:
-
-./rootfs.img
