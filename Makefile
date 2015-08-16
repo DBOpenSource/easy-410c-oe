@@ -43,11 +43,11 @@ $(BUILDDIR): .updated
 	
 # Build the rootfs
 core-image: $(ROOTFS_IMG)
-$(ROOTFS_IMG): bblayers _firmware
+$(ROOTFS_IMG): bblayers $(FIRMWARE_ZIP)
 	@[ -f $@ ] || ./scripts/make_bbtarget.sh $(BUILDDIR) core-image-minimal
 	@echo "rootfs image created"
 
-#core-image-x11: bblayers _firmware
+#core-image-x11: bblayers $(FIRMWARE_ZIP)
 #	@./scripts/make_bbtarget.sh $(BUILDDIR) core-image-x11
 
 # Build the Kernel
